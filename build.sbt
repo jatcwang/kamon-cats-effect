@@ -90,6 +90,9 @@ lazy val commonSettings = Seq(
     else
       Seq("-Xfatal-warnings")
   },
+  Test / scalacOptions --= Seq(
+    "-Ywarn-value-discard"
+  ),
   addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.0" cross CrossVersion.full),
   addCompilerPlugin("com.olegpy" %% "better-monadic-for" % "0.3.1"),
   libraryDependencies ++= Seq(

@@ -5,8 +5,6 @@ import java.util.concurrent.ConcurrentHashMap
 import cats.effect.IO
 import kamon.Kamon
 import kamon.catseffect.KamonCatsEffectUtils.{markSpan, markSpanCustom}
-import kamon.catseffect.KamonCatsEffectUtilsSpec.SpanRecorder
-import kamon.tag.Tag
 import kamon.tag.Tag.unwrapValue
 import kamon.testkit.TestSpanReporter
 import kamon.trace.{Identifier, Span}
@@ -102,7 +100,7 @@ class KamonCatsEffectUtilsSpec extends AnyWordSpec with TestSpanReporter with Be
             }
             _ <- markSpan("21")(for {
               _ <- IO(assertCurrentOperationName("21"))
-              _ <- IO.raiseError(sys.error("oops"))
+              _ <- IO.raiseError[Unit](new Exception("oops"))
             } yield ()).attempt
             _ <- markSpan("22")(IO {
               assertCurrentOperationName("22")
