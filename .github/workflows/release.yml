@@ -25,8 +25,6 @@ jobs:
             ${{ runner.OS }}-scala-cache-${{ matrix.scala }}-${{ hashFiles('**/*.sbt') }}-
             ${{ runner.OS }}-scala-cache-${{ matrix.scala }}-
             ${{ runner.OS }}-scala-cache-
-      - name: Pull postgres image
-        run: docker ps && docker pull postgres:12.3-alpine
       - uses: olafurpg/setup-gpg@v2
       - name: Setup Jekyll
         run: gem install jekyll -v 4.1.1

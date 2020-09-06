@@ -28,7 +28,5 @@
             ${{ runner.OS }}-scala-cache-
       - name: Setup Jekyll
         run: gem install jekyll -v 4.1.1
-      - name: Pull postgres image
-        run: docker ps && docker pull postgres:12.3-alpine
       - name: Compile
         run: sbt test makeMicrosite
