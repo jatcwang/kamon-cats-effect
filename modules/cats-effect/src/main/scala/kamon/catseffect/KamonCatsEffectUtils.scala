@@ -14,15 +14,10 @@ object KamonCatsEffectUtils {
     })(io)
 
   def markSpanCustom[F[_], E, A](
-    createSpanBuilder: F[SpanBuilder],
+    mkSpanBuilder: F[SpanBuilder],
   )(io: F[A])(implicit F: Sync[F]): F[A] = {
-    createSpanBuilder
-      .map { builder =>
-        val newSpan = builder.start()
-        val nextCtx: Context = Kamon.currentContext().withEntry(Span.Key, newSpan)
-        val scope: Scope = Kamon.storeContext(nextCtx)
-        (newSpan, scope)
-      }
+    mkSpanBuilder
+      .flatMap(builder => startSpanAndSetAsCurrentKamonContext(builder))
       .flatMap {
         case (span, scope) =>
           F.guaranteeCase(io) {
@@ -45,4 +40,15 @@ object KamonCatsEffectUtils {
           }
       }
   }
+
+  private[kamon] def startSpanAndSetAsCurrentKamonContext[F[_]](
+    builder: SpanBuilder,
+  )(implicit F: Sync[F]): F[(Span, Scope)] =
+    F.delay {
+      val newSpan = builder.start()
+      val nextCtx: Context = Kamon.currentContext().withEntry(Span.Key, newSpan)
+      val scope: Scope = Kamon.storeContext(nextCtx)
+      (newSpan, scope)
+    }
+
 }
